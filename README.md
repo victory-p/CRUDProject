@@ -32,6 +32,7 @@
   
   
 * [3] 팀원 정보 수정하기
+* 
   <img width="513" alt="스크린샷 2021-06-29 오전 5 08 20" src="https://user-images.githubusercontent.com/63582262/123697574-07a7d400-d898-11eb-8a06-25c045ae1174.png">
   
   
