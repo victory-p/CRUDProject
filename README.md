@@ -8,7 +8,9 @@
 
 
 
+
 * 메뉴 출력
+
   <img width="211" alt="스크린샷 2021-06-29 오전 5 01 38" src="https://user-images.githubusercontent.com/63582262/123696787-180b7f00-d897-11eb-9611-35f6dd834b4e.png">
 
 
@@ -23,6 +25,7 @@
   
   
 * [2] 팀원 정보 추가하기
+
   <img width="208" alt="스크린샷 2021-06-29 오전 5 06 06" src="https://user-images.githubusercontent.com/63582262/123697311-b7c90d00-d897-11eb-86c5-059bc0f4f844.png">
   
   
@@ -36,6 +39,7 @@
 
 
 * [4] 팀원 정보 삭제하기
+
   <img width="523" alt="스크린샷 2021-06-29 오전 5 10 50" src="https://user-images.githubusercontent.com/63582262/123697870-60776c80-d898-11eb-84e0-7d095c7918fe.png">
 
 
@@ -50,4 +54,5 @@
 
 
 * [6] 종료
+
   <img width="200" alt="스크린샷 2021-06-29 오전 5 15 20" src="https://user-images.githubusercontent.com/63582262/123698310-01662780-d899-11eb-9d8f-b91dade1edff.png">
