@@ -19,6 +19,11 @@ public class Member {
         this.date = date;
     }
 
+    @Override
+    public String toString() {
+        return this.num + "\t" + this.name + "\t\t" + this.gender + "\t\t" + this.major + "\t\t" + this.studentNum + "\t" + this.date;
+    }
+
     public int getNum() {
         return num;
     }
