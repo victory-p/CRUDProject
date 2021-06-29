@@ -1,6 +1,6 @@
-Member.java
- Member
 Main.java
  Main
+Member.java
+ Member
 Management.java
  Management

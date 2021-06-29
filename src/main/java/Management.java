@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.apache.commons.io.FileUtils;
+import java.io.*;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,7 +21,8 @@ public class Management {
         System.out.println("[3] 팀원 정보 수정하기");
         System.out.println("[4] 팀원 정보 삭제하기");
         System.out.println("[5] 팀원 학번 검색하기");
-        System.out.println("[6] 종료하기");
+        System.out.println("[6] 팀원 명단 파일 저장하기");
+        System.out.println("[7] 종료하기");
         System.out.println("========================");
     }
 
@@ -48,6 +49,14 @@ public class Management {
                 break;
 
             case 6:
+                try {
+                    saveFile(list);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case 7:
                 System.out.println(">>>종료<<<");
                 return false;
 
@@ -203,5 +212,28 @@ public class Management {
         }catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void saveFile(List<Member> list) throws IOException {
+        String path = Paths.get(".").toAbsolutePath().toString();
+        String filename = path + "/MemberList.txt";
+
+
+        File myfile = new File(filename);
+        FileUtils.touch(myfile);
+
+        try {
+            FileWriter fw = new FileWriter(myfile);
+            PrintWriter pw = new PrintWriter(new FileWriter(filename));
+
+            for(Member m: this.list){
+                pw.print(m.getNum() + " / " + m.getName() + " / " + m.getGender() + " / " + m.getMajor() + " / " + m.getStudentNum() + " / " + m.getDate() + "\n");
+            }
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(">>>파일 저장 완료<<<");
     }
 }
