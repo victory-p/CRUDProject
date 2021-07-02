@@ -1,113 +1,98 @@
-import org.apache.commons.io.FileUtils;
-import java.io.*;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Management {
     BufferedReader br;
-    private List<Member> list;
 
-    public Management() {
-        this.list = new ArrayList<>();
-    }
+    FileService fileService = new FileService();
 
-    public void printMenu() {
-        System.out.println("==========MENU==========");
-        System.out.println("[1] 팀원 명단 조회하기");
-        System.out.println("[2] 팀원 정보 추가하기");
-        System.out.println("[3] 팀원 정보 수정하기");
-        System.out.println("[4] 팀원 정보 삭제하기");
-        System.out.println("[5] 팀원 학번 검색하기");
-        System.out.println("[6] 팀원 명단 파일 저장하기");
-        System.out.println("[7] 종료하기");
-        System.out.println("========================");
-    }
-
-    public boolean selectMenu(int menu) {
-        switch (menu) {
-            case 1:
-                readInfo();
-                break;
-
-            case 2:
-                createInfo();
-                break;
-
-            case 3:
-                updateInfo();
-                break;
-
-            case 4:
-                deleteInfo();
-                break;
-
-            case 5:
-                searchStudentNum();
-                break;
-
-            case 6:
-                try {
-                    saveFile(list);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            case 7:
-                System.out.println(">>>종료<<<");
-                return false;
-
-            default:
-                System.out.println(">>>잘못된 접근<<<");
-        }
-        return true;
-    }
-
-    private void readInfo() {
-        if (this.list.size() == 0) {
+    public void readInfo(ArrayList<Member> list){
+        if (list.size() == 0) {
             System.out.println(">>>조회할 데이터 없음<<<\n");
             return;
         }
 
         System.out.println("\nNo \t Name \t Gender \t Major \t\t Student Num \t Date");
         System.out.println("---------------------------------------------------------------");
-        for (Member m : this.list) {
+        for (Member m : list) {
             System.out.println(m.toString());
         }
         System.out.println();
     }
 
-    private void createInfo() {
-        Member m = new Member();
+    public Member createInfo(ArrayList<Member> list) throws IOException {
+        int num;
+        String name;
+        String gender;
+        String major;
+        String studentnum;
+        String regDate;
+
+        num = list.size() + 1;
+
+        System.out.print(("팀원 이름 : "));
+        br = new BufferedReader(new InputStreamReader(System.in));
+        name = br.readLine();
+
+        System.out.print("성별 : ");
+        gender = br.readLine();
+
+        System.out.print("학부 : ");
+        major = br.readLine();
+
+        System.out.print("학번 : ");
+        studentnum = br.readLine();
+
+        LocalDate date = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        regDate = date.format(formatter);
+
+        Member m = new Member(num, name, gender, major, studentnum, regDate);
+
+        return m;
+    }
+
+    public void updateInfo(ArrayList<Member> list) {
+        if (list.size() == 0) {
+            System.out.println(">>>수정할 데이터 없음<<<\n");
+            return;
+        }
 
         try {
-            System.out.print(("팀원 이름 : "));
+            System.out.print(">>> 수정할 팀원 번호 : ");
             br = new BufferedReader(new InputStreamReader(System.in));
-            m.setName(br.readLine());
-            System.out.print("성별 : ");
-            m.setGender(br.readLine());
-            System.out.print("학부 : ");
-            m.setMajor(br.readLine());
-            System.out.print("학번 : ");
-            m.setStudentNum(br.readLine());
+            int num = Integer.parseInt(br.readLine());
+
+            if(Management.valid(list, num)) {
+                System.out.print(("팀원 이름 : "));
+                list.get(num-1).setName(br.readLine());
+
+                System.out.print("성별 : ");
+                list.get(num-1).setGender(br.readLine());
+
+                System.out.print("학부 : ");
+                list.get(num-1).setMajor(br.readLine());
+
+                System.out.print("학번 : ");
+                list.get(num-1).setStudentNum(br.readLine());
+
+                LocalDate date = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String regDate = date.format(formatter);
+                list.get(num-1).setDate(regDate);
+            } else {
+                updateInfo(list);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        m.setNum(this.list.size() + 1);
-        LocalDate date = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String regDate = date.format(formatter);
-        m.setDate(regDate);
-
-        this.list.add(m);
-
-        System.out.println("\n>>>추가 완료<<<\n");
     }
-
-    private void updateInfo() {
+/*
+    void updateInfo() {
         if (this.list.size() == 0) {
             System.out.println(">>>수정할 데이터 없음<<<\n");
             return;
@@ -146,56 +131,48 @@ public class Management {
             e.printStackTrace();
         }
     }
+ */
 
-    private void deleteInfo() {
-        if (this.list.size() == 0) {
+    public void deleteInfo(ArrayList<Member> list) {
+        if (list.size() == 0) {
             System.out.println(">>>삭제할 데이터 없음<<<\n");
             return;
         }
 
         try {
-            System.out.println("\nNo \t Name \t Gender \t Major \t\t Student Num \t Date");
-            System.out.println("---------------------------------------------------------------");
-            for (Member m : this.list) {
-                System.out.println(m.toString());
-            }
-            System.out.println();
-
             System.out.print(">>> 삭제할 팀원 번호 : ");
             br = new BufferedReader(new InputStreamReader(System.in));
+
             int num = Integer.parseInt(br.readLine());
-
-            if (this.list.size() >= num) {
-                this.list.remove(num-1);
-                for (int i = 0; i < list.size(); i++) {
-                    this.list.get(i).setNum(i+1);
+            if(Management.valid(list, num)) {
+                list.remove(num-1);
+                for(int i=0; i<list.size(); i++){
+                    list.get(i).setNum(i+1);
                 }
-
-                System.out.println(">>> 삭제 완료");
-            } else {
-                deleteInfo();
+            }else {
+                deleteInfo(list);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void searchStudentNum() {
-        if (this.list.size() == 0) {
-            System.out.println(">>>검색할 데이터 없음<<<\n");
-            return;
+    private static boolean valid(ArrayList<Member> list, int num) {
+        if (list.size() <= (num-1) || num == -1) {
+            System.out.println("없는 번호 입니다.");
+            return false;
         }
+        return true;
+    }
 
-        System.out.print(">>> 검색할 학번(8자리) 입력 : ");
-        br = new BufferedReader(new InputStreamReader(System.in));
 
-        try{
+        /*try {
             String snum = br.readLine();
             boolean check = false;
 
-            for(Member m: list){
-                if(m.getStudentNum().equals(snum)){
-                    if(!check){
+            for (Member m : list) {
+                if (m.getStudentNum().equals(snum)) {
+                    if (!check) {
                         System.out.println("\nNo \t Name \t Gender \t Major \t\t Student Num \t Date");
                         System.out.println("---------------------------------------------------------------");
                         check = true;
@@ -205,16 +182,15 @@ public class Management {
             }
             System.out.println();
 
-            if(!check){
+            if (!check) {
                 System.out.println(">>> 검색 결과 없음<<<\n");
             }
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
+        }*/
 
-    private void saveFile(List<Member> list) throws IOException {
+    /*void saveFile(List<Member> list) throws IOException {
         String path = Paths.get(".").toAbsolutePath().toString();
         String filename = path + "/MemberList.txt";
 
@@ -226,14 +202,54 @@ public class Management {
             FileWriter fw = new FileWriter(myfile);
             PrintWriter pw = new PrintWriter(new FileWriter(filename));
 
-            for(Member m: this.list){
-                pw.print(m.getNum() + " / " + m.getName() + " / " + m.getGender() + " / " + m.getMajor() + " / " + m.getStudentNum() + " / " + m.getDate() + "\n");
+            for (Member m : this.list) {
+                pw.print(m.getName() + " / " + m.getGender() + " / " + m.getMajor() + " / " + m.getStudentNum() + " / " + m.getDate() + "\n");
             }
             pw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        System.out.println(">>>파일 저장 완료<<<");
+        System.out.println(">>>파일 저장 완료<<<\n");
     }
+
+    public ArrayList<Member> readFile() {
+        ArrayList<Member> list = new ArrayList<>();
+
+        try {
+            File file = new File("MemberList.txt");
+            FileReader filereader = null;
+            try {
+                filereader = new FileReader(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            BufferedReader bufReader = new BufferedReader(filereader);
+
+            int i = 0;
+            String line = "";
+            while ((line = bufReader.readLine()) != null) {
+
+                StringTokenizer st = new StringTokenizer(line, "/");
+
+                String name = st.nextToken().trim();
+                String gender = st.nextToken().trim();
+                String major = st.nextToken().trim();
+                String snum = st.nextToken().trim();
+                String date = st.nextToken().trim();
+
+                list.add(new Member(i, name, gender, major, snum, date));
+                i++;
+            }
+            bufReader.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("data.txt 파일이 존재하지 않습니다.");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+        return list;
+    }*/
+
 }
